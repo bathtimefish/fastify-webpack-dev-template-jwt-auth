@@ -2,7 +2,7 @@
 
 This is an [fastify developer's template](https://github.com/bathtimefish/fastify-webpack-dev-template) that adding authorization process with [fastify-jwt](https://github.com/fastify/fastify-jwt). The API request can be authorized with JWT on builded web server.
 
-# How to use
+## How to use
 
 ```
 git clone https://github.com/bathtimefish/fastify-webpack-dev-template-jwt-auth
@@ -12,25 +12,25 @@ npm i
 
 And you can write server application logic on `src/server.ts` and write routers under `src/router/`.
 
-# Build
+## Build
 
 ```
 npm run build
 ```
 
-# Start app server
+## Start app server
 
 ```
 npm start
 ```
 
-# Test
+## Test
 
 ```
 npm test
 ```
 
-# Getting Started
+## Getting Started
 
 You can get token like this.
 
