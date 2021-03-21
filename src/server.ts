@@ -17,6 +17,9 @@ server.register(fastifyStatic, {
 server.register(require('fastify-boom'));
 server.register(require('fastify-jwt'), {
   secret: 'supersecret',
+  sign: {
+    expiresIn: 60,  // token will expire for 60 seconds.
+  },
 });
 server.register(fastifyOauth2, {
   name: 'googleOAuth2',
