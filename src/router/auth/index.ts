@@ -1,5 +1,6 @@
 import { FastifyInstance, RouteHandlerMethod, FastifySchema } from 'fastify';
 import fastifyPlugin from 'fastify-plugin';
+import nodeFetch from 'node-fetch';
 
 const name = 'auth';
 
@@ -41,6 +42,36 @@ const router =  function (server: FastifyInstance, _: any, next: any) {
 
   server.get(`/${name}/session`, {
     handler: getHandler,
+  });
+
+  server.get(`/${name}/google/callback`, async function (request, reply) {
+    const self = this as any;
+    /* tslint:disable:max-line-length */
+    self.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request, async (err: any, result: any) => {
+      if (err) {
+        reply.send(err);
+        return;
+      }
+      console.log(result);
+      /* tslint:disable:max-line-length */
+      const url = 'https://people.googleapis.com/v1/people/me?personFields=emailAddresses,names';
+      const options = {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${result.access_token}`,
+        },
+      };
+      const res = await nodeFetch(url, options);
+      const people = await res.json();
+      console.log(people);
+      const payload = {
+        name: people.names[0].displayName,
+        email: people.emailAddresses[0].value,
+      };
+      const token = server.jwt.sign(payload);
+      console.log(token);
+      reply.send(token);
+    });
   });
 
   next();

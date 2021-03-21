@@ -4,6 +4,7 @@ import fastifyStatic from 'fastify-static';
 import path from 'path';
 // @ts-ignore
 import { FastifyJWT } from 'fastify-jwt';
+import fastifyOauth2 from 'fastify-oauth2';
 
 const server = fastify();
 server.register(fastifyCors, {
@@ -17,16 +18,32 @@ server.register(require('fastify-boom'));
 server.register(require('fastify-jwt'), {
   secret: 'supersecret',
 });
+server.register(fastifyOauth2, {
+  name: 'googleOAuth2',
+  scope: [
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email',
+  ],
+  credentials: {
+    client: {
+      id: '719492741252-d6e3p0cmf8j1d4q2q4ddiir7ckvpqj3r.apps.googleusercontent.com',
+      secret: '26P72SotDxgbQnl4QZlEDkgN',
+    },
+    auth: fastifyOauth2.GOOGLE_CONFIGURATION,
+  },
+  startRedirectPath: '/auth/google',
+  callbackUri: 'http://localhost:8080/auth/google/callback',
+});
 
-server.addHook('onRequest', async (request, reply, done) => {
+server.addHook('onRequest', async (request, _, done) => {
   try {
-    if (request.url === '/auth/signin') {
+    if (/^\/auth\/google/.test(request.url)) {
       done();
     } else {
       await request.jwtVerify();
     }
   } catch (err) {
-    reply.send(err);
+    throw err;
   }
 });
 
