@@ -26,8 +26,8 @@ server.register(fastifyOauth2, {
   ],
   credentials: {
     client: {
-      id: '719492741252-d6e3p0cmf8j1d4q2q4ddiir7ckvpqj3r.apps.googleusercontent.com',
-      secret: '26P72SotDxgbQnl4QZlEDkgN',
+      id: String(process.env.GOOGLE_AUTH_CLIEND_ID),
+      secret: String(process.env.GOOGLE_AUTH_SECRET),
     },
     auth: fastifyOauth2.GOOGLE_CONFIGURATION,
   },
