@@ -1,0 +1,18 @@
+[Unit]
+Description=ExampleAppServer
+After=syslog.target network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ubuntu/example-appserver/
+ExecStart=/snap/bin/node /home/ubuntu/example-appserver/dist/index.js
+TimeoutStopSec=5
+KillMode=process
+Restart=always
+User=root
+Group=root
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy = multi-user.target
