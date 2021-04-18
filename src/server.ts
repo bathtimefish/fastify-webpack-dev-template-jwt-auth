@@ -15,12 +15,6 @@ server.register(fastifyStatic, {
   prefix: '/',
 });
 server.register(require('fastify-boom'));
-server.register(require('fastify-jwt'), {
-  secret: 'supersecret',
-  sign: {
-    expiresIn: 60,  // token will expire for 60 seconds.
-  },
-});
 server.register(fastifyOauth2, {
   name: 'googleOAuth2',
   scope: [
@@ -29,26 +23,15 @@ server.register(fastifyOauth2, {
   ],
   credentials: {
     client: {
-      id: String(process.env.GOOGLE_AUTH_CLIEND_ID),
+      id: String(process.env.GOOGLE_AUTH_CLIENT_ID),
       secret: String(process.env.GOOGLE_AUTH_SECRET),
     },
     auth: fastifyOauth2.GOOGLE_CONFIGURATION,
   },
   startRedirectPath: '/auth/google',
-  callbackUri: 'http://localhost:8080/auth/google/callback',
+  callbackUri: String(process.env.GOOGLE_AUTH_CALLBACK_URL),
 });
-
-server.addHook('onRequest', async (request, _, done) => {
-  try {
-    if (/^\/auth\/google/.test(request.url)) {
-      done();
-    } else {
-      await request.jwtVerify();
-    }
-  } catch (err) {
-    throw err;
-  }
-});
+server.register(require('./lib/Authenticate'));
 
 server.get('/', async (_, rep) => {
   rep.sendFile('index.html');

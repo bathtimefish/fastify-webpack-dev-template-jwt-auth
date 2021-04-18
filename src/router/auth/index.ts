@@ -41,6 +41,8 @@ const router =  function (server: FastifyInstance, _: any, next: any) {
   });
 
   server.get(`/${name}/session`, {
+    // @ts-ignore
+    preValidation: [server.authenticate],
     handler: getHandler,
   });
 
@@ -49,8 +51,8 @@ const router =  function (server: FastifyInstance, _: any, next: any) {
     /* tslint:disable:max-line-length */
     self.googleOAuth2.getAccessTokenFromAuthorizationCodeFlow(request, async (err: any, result: any) => {
       if (err) {
-        reply.send(err);
-        return;
+        console.error(`GoogleAuthError: ${err}`);
+        reply.redirect(303, `${process.env.UI_AUTH_URL}`);
       }
       console.log(result);
       /* tslint:disable:max-line-length */
@@ -70,7 +72,8 @@ const router =  function (server: FastifyInstance, _: any, next: any) {
       };
       const token = server.jwt.sign(payload);
       console.log(token);
-      reply.send(token);
+      const redirectUrl = `${process.env.UI_AUTH_URL}?t=${token}`;
+      reply.redirect(303, redirectUrl);
     });
   });
 
