@@ -1,13 +1,29 @@
-# Fastiy Webpack dev template with JWT auth
+# Fastiy Webpack dev template with JWT & Google auth
 
 This is an [fastify developer's template](https://github.com/bathtimefish/fastify-webpack-dev-template) that adding authorization process with [fastify-jwt](https://github.com/fastify/fastify-jwt). The API request can be authorized with JWT on builded web server.
+
+This branch can be authorized user account and generated JWT by google auhorization.
 
 ## How to use
 
 ```
-git clone https://github.com/bathtimefish/fastify-webpack-dev-template-jwt-auth
+git clone -b google-auth https://github.com/bathtimefish/fastify-webpack-dev-template-jwt-auth
 cd fastify-webpack-dev-template-jwt-auth
 npm i
+```
+
+## Export Env values
+
+Export environment  values like below after setuped google oauth authorization.
+
+```
+export GOOGLE_AUTH_CLIENT_ID=[GOOGLE AUTH CLIENT ID]
+export GOOGLE_AUTH_SECRET=[GOOGLE AUTH SECRET]
+export GOOGLE_AUTH_CALLBACK_URL=http://localhost:8080/auth/google/callback
+export APPSERVER_AUTH_SECRET=supersecret
+export APPSERVER_AUTH_EXPIRED_IN=1day
+export APPSERVER_PORT=8080
+export UI_AUTH_URL=http://localhost:8080/#/auth
 ```
 
 And you can write server application logic on `src/server.ts` and write routers under `src/router/`.
@@ -32,12 +48,14 @@ npm test
 
 ## Getting Started
 
-You can get token like this.
+You can see the login UI of google when you access `/auth/google` with web browser.
+
+[http://localhost:8080/auth/google](http://localhost:8080/auth/google)
+
+After logined, You can get access token as query parameter on callback url like below.
 
 ```
-curl -XPOST -H 'Content-Type: application/json' -d '{"name": "bathtimefish", "email": "bathtimefish@example.com"}' http://localhost:8080/auth/signin
-
-[token]
+http://localhost:8080/#/auth?t=[token]
 ```
 
 You can request other APIs with authorization header including token.
